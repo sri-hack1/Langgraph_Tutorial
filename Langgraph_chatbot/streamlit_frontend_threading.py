@@ -24,7 +24,15 @@ def load_conversation(thread_id):
 
 
     
-# ************************ Sesson State Initialization ************************
+# ************************ Session State Initialization ************************
+# ''' **session_state is a dict 
+#     now, {'messages': [
+#         {'role': 'user', 'content': 'Hello!'},
+#         {{'role': 'assistant', 'content': 'Hey there!!'},}
+#     ]}
+    
+#     So session_state['messages'] is a list of dicts
+# '''
 if 'messages' not in st.session_state:
     st.session_state['messages'] = []  # Initialize messages if not present
 
@@ -38,15 +46,20 @@ add_thread(st.session_state['thread_id'])
 
 # ************************************* Sidebar UI **********************************
 
-st.sidebar.title("Langgraph Chatbot")
+st.sidebar.title("LangGraph Chatbot")
+
 if st.sidebar.button("New Chat"):
     reset_chat()
+    
 st.sidebar.header("My Conversations")
+
+#   # Display current thread ID
+
 for thread_id in st.session_state['chat_threads'][::-1]:  # Display in reverse order (latest first)
     if st.sidebar.button(str(thread_id)):
         st.session_state['thread_id'] = thread_id
         messages = load_conversation(thread_id)
-
+    
         temp_message = []
         for msg in messages:
             if isinstance(msg, HumanMessage):
@@ -60,7 +73,8 @@ for thread_id in st.session_state['chat_threads'][::-1]:  # Display in reverse o
 
 # *********************************** Main UI ************************************
 # Display chat messages from history on app rerun
-for message in st.session_state.messages:
+for message in st.session_state['messages']:
+    # Here message is a dict with keys 'role' and 'content'
     with st.chat_message(message["role"]):
         st.write(message["content"])
 
@@ -71,7 +85,7 @@ if user_input:
     CONFIG = {'configurable': {'thread_id': st.session_state['thread_id']}}
     
     # Appending user message to chat history
-    st.session_state.messages.append({"role": "user", "content": user_input})
+    st.session_state['messages'].append({"role": "user", "content": user_input})
     
     # Displaying user message
     with st.chat_message("user"):
