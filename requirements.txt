@@ -1,7 +1,9 @@
 langgraph
 langchain
 langchain-openai
+langchain-community
 dotenv
 langchain-groq
 pydantic
 streamlit
+ddgs
